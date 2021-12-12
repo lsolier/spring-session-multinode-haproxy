@@ -1,0 +1,100 @@
+version: '3.1'
+services:
+  webapp1:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/webapp
+      - OKTA_OAUTH2_ISSUER=${OKTA_OAUTH2_ISSUER}
+      - OKTA_OAUTH2_CLIENT_ID=${OKTA_OAUTH2_CLIENT_ID}
+      - OKTA_OAUTH2_CLIENT_SECRET=${OKTA_OAUTH2_CLIENT_SECRET}
+    image: webapp
+    hostname: webapp1
+    ports:
+      - 8081:8080
+    networks:
+      spring_session_haproxy_network:
+        aliases:
+          - webapp1
+    depends_on:
+      - "db"
+  webapp2:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/webapp
+      - OKTA_OAUTH2_ISSUER=${OKTA_OAUTH2_ISSUER}
+      - OKTA_OAUTH2_CLIENT_ID=${OKTA_OAUTH2_CLIENT_ID}
+      - OKTA_OAUTH2_CLIENT_SECRET=${OKTA_OAUTH2_CLIENT_SECRET}
+    image: webapp
+    hostname: webapp2
+    ports:
+      - 8082:8080
+    networks:
+      spring_session_haproxy_network:
+        aliases:
+          - webapp2
+    depends_on:
+      - "db"
+  webapp3:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/webapp
+      - OKTA_OAUTH2_ISSUER=${OKTA_OAUTH2_ISSUER}
+      - OKTA_OAUTH2_CLIENT_ID=${OKTA_OAUTH2_CLIENT_ID}
+      - OKTA_OAUTH2_CLIENT_SECRET=${OKTA_OAUTH2_CLIENT_SECRET}
+    image: webapp
+    hostname: webapp3
+    ports:
+      - 8083:8080
+    networks:
+      spring_session_haproxy_network:
+        aliases:
+          - webapp3
+    depends_on:
+      - "db"
+
+  db:
+    container_name: mysql-okta
+    image: mysql:5.7.25
+    #command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: webapp
+      MYSQL_USER: userOkta
+      MYSQL_PASSWORD: userOkta
+    ports:
+      - 3306:3306
+    networks:
+      spring_session_haproxy_network:
+        aliases:
+          - db
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8090:8080
+    networks:
+      spring_session_haproxy_network:
+        aliases:
+          - adminer_app
+
+  haproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile-haproxy
+    image: my-haproxy
+    ports:
+      - 80:80
+    depends_on:
+      - "webapp1"
+      - "webapp2"
+      - "webapp3"
+    networks:
+      spring_session_haproxy_network:
+        aliases:
+          - haproxy_server
+
+networks:
+  spring_session_haproxy_network:
+    name: spring_session_haproxy_net
+    driver: bridge
+    ipam:
+      driver: default

@@ -1,0 +1,23 @@
+#Wed Dec 08 09:59:57 COT 2021
+okta:
+  oauth2:
+    client-id: 0oa30yhtkweEQvsMd5d7
+    client-secret: S3bmpfkPKOU1ZBbx-0EZ89uxH4xvy8YScrYpfR8C
+    issuer: https://dev-7176566.okta.com/oauth2/default
+
+spring:
+  session:
+    jdbc:
+      initialize-schema: always
+  datasource:
+    url: jdbc:mysql://localhost:3306/webapp
+    username: root
+    password: example
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      initializationFailTimeout: 0
+
+logging:
+  level:
+    org.springframework: INFO
+    com.zaxxer.hikari: DEBUG
