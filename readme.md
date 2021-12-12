@@ -15,3 +15,6 @@ docker-compose up
 ```
 
 In a browser, go to http://localhost/greeting
+
+source from:
+https://developer.okta.com/blog/2020/10/02/spring-session-mysql
